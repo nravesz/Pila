@@ -49,7 +49,10 @@ bool pila_apilar(pila_t *pila, void* valor){
 	if (valor == NULL){
 		return true;
 	}
-	if ((pila->cantidad + 1) > pila->capacidad){
+	if (pila->capacidad == 0){
+		return false;
+	}
+	if ((pila->cantidad) >= pila->capacidad){
 		pila_redimensionar(pila, 2);
 	}
 	pila->datos[pila->cantidad-1] = valor;
@@ -79,11 +82,19 @@ void* pila_desapilar(pila_t *pila){
 }
 
 bool pila_redimensionar(pila_t *pila, size_t tam_nuevo){
-	void *aux = realloc(pila->datos, (pila->capacidad * tam_nuevo) * sizeof(void*));
-	if (tam_nuevo > 0 && aux == NULL){
+	size_t tamanio = TAM_INICIAL * tam_nuevo;
+	void **aux = realloc(pila->datos, tamanio * sizeof(void*));
+	if (aux == NULL){
 		return false;
 	}
 	pila->datos = aux;
-	pila->capacidad = pila->capacidad * tam_nuevo;
+	pila->capacidad = tamanio;
 	return true;
+}
+
+/* Funciones que no pertenecen al TDA Pila. Usadas para las pruebas*/
+
+void mostrar_capacidad_cantidad(pila_t *pila){
+	printf("Capacidad: %zu\nCantidad: %zu\n", pila->capacidad, pila->cantidad);
+	return;
 }
