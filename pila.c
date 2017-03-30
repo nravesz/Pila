@@ -24,7 +24,7 @@ pila_t* pila_crear(void){
 		return NULL;
 	}
 	pila->datos = malloc(TAM_INICIAL * sizeof(void*));
-	if (pila->datos == NULL){
+	if (pila->datos == NULL && pila->cantidad <0){
 		free(pila);
 		return NULL;
 	}
@@ -53,9 +53,9 @@ bool pila_apilar(pila_t *pila, void* valor){
 		return false;
 	}
 	if ((pila->cantidad) >= pila->capacidad){
-		pila_redimensionar(pila, 2);
+		pila_redimensionar(pila,pila->capacidad * 2);
 	}
-	pila->datos[pila->cantidad-1] = valor;
+	pila->datos[pila->cantidad] = valor;
 	pila->cantidad += 1;
 	return true;
 }
@@ -76,19 +76,18 @@ void* pila_desapilar(pila_t *pila){
 	pila->datos[pila->cantidad-1] = NULL;
 	pila->cantidad -= 1;
 	if (pila->cantidad <= (pila->capacidad)/4){
-		pila_redimensionar(pila,1/4);
+		pila_redimensionar(pila,pila->capacidad * 1/4);
 	}
 	return valor;
 }
 
-bool pila_redimensionar(pila_t *pila, size_t tam_nuevo){
-	size_t tamanio = TAM_INICIAL * tam_nuevo;
-	void **aux = realloc(pila->datos, tamanio * sizeof(void*));
+bool pila_redimensionar(pila_t *pila, size_t tam){
+	void *aux = realloc(pila->datos, tam * sizeof(void*));
 	if (aux == NULL){
 		return false;
 	}
 	pila->datos = aux;
-	pila->capacidad = tamanio;
+	pila->capacidad = tam;
 	return true;
 }
 
